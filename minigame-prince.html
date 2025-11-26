@@ -1,0 +1,317 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Word Search - The Little Prince</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+    <style>
+        /* Importando a mesma fonte divertida dos outros jogos */
+        @import url('https://fonts.googleapis.com/css2?family=Comic+Neue:wght@700&display=swap');
+
+        body {
+            margin: 0; padding: 0; height: 100vh;
+            /* Fundo do Mapa do Príncipe */
+            background-image: url('images/background-prince-path.jpg');
+            background-size: cover; background-position: center;
+            font-family: 'Comic Neue', cursive;
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
+            user-select: none;
+        }
+
+        .container {
+            background-color: rgba(255, 255, 255, 0.90);
+            padding: 20px; border-radius: 20px;
+            /* Borda Dourada para combinar com o tema */
+            border: 5px solid #f1c40f;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.3);
+            display: flex; gap: 30px; align-items: flex-start;
+            max-width: 900px;
+        }
+
+        h1 { color: #2c3e50; margin: 0 0 10px 0; text-align: center; width: 100%; }
+
+        /* Grade de Letras */
+        #word-grid {
+            display: grid;
+            grid-template-columns: repeat(10, 40px);
+            grid-gap: 5px;
+            /* Fundo da grade em Azul Noite */
+            background-color: #2c3e50;
+            padding: 5px; border-radius: 5px;
+        }
+
+        .letter {
+            width: 40px; height: 40px;
+            background-color: #fff;
+            display: flex; justify-content: center; align-items: center;
+            font-size: 1.2em; font-weight: bold; cursor: pointer;
+            text-transform: uppercase;
+            color: #2c3e50;
+        }
+
+        /* Cores de Seleção */
+        .letter.selected { background-color: #e67e22; color: #fff; } /* Laranja */
+        .letter.found { background-color: #f1c40f; color: #2c3e50; animation: pulse 0.5s; } /* Dourado */
+
+        /* Área da Direita */
+        .sidebar {
+            display: flex; flex-direction: column; align-items: center;
+            min-width: 150px; gap: 15px;
+        }
+
+        /* Lista de Palavras */
+        #word-list { display: flex; flex-direction: column; gap: 10px; width: 100%; }
+        .hidden-list { display: none !important; }
+
+        .word-item {
+            font-size: 1.5em; color: #555;
+            padding: 5px 10px; border-radius: 5px;
+            transition: 0.3s; background-color: #eee; text-align: center;
+        }
+        .word-item.done {
+            text-decoration: line-through; color: #bbb; background-color: #ddd;
+        }
+
+        /* Botão Hint */
+        #hint-btn {
+            background-color: #e67e22; color: white; border: none; /* Laranja */
+            border-radius: 50px; padding: 15px 30px;
+            font-family: 'Comic Neue', cursive; font-size: 1.5em; font-weight: bold;
+            cursor: pointer; box-shadow: 0 5px 0 #d35400;
+            transition: transform 0.1s, box-shadow 0.1s;
+        }
+        #hint-btn:active { transform: translateY(5px); box-shadow: 0 0 0 #d35400; }
+
+        /* Botão Voltar */
+        .back-btn {
+            position: fixed; top: 20px; left: 20px;
+            background: rgba(0,0,0,0.8); color: white;
+            width: 60px; height: 60px; border-radius: 50%;
+            display: flex; justify-content: center; align-items: center;
+            font-size: 2em; text-decoration: none;
+        }
+
+        /* Modal Vitória */
+        .modal-overlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.8); display: none;
+            justify-content: center; align-items: center; z-index: 1000;
+        }
+        .modal-content {
+            background: #fff; padding: 40px; border-radius: 15px; text-align: center;
+            border: 5px solid #f1c40f; /* Dourado */
+        }
+        .btn-finish {
+            background: #f1c40f; color: #2c3e50; border: none; /* Dourado */
+            padding: 10px 30px; font-size: 1.2em; border-radius: 10px;
+            cursor: pointer; font-family: inherit; margin-top: 15px;
+            font-weight: bold;
+        }
+
+        @keyframes pulse { 0% { transform: scale(1); } 50% { transform: scale(1.2); } 100% { transform: scale(1); } }
+        
+        @media(max-width: 768px) {
+            .container { flex-direction: column; align-items: center; }
+            #word-grid { grid-template-columns: repeat(8, 35px); }
+            .letter { width: 35px; height: 35px; font-size: 1em; }
+        }
+    </style>
+</head>
+<body>
+    <a href="game-prince.html" class="back-btn"><i class="fas fa-arrow-left"></i></a>
+
+    <div class="container">
+        <div>
+            <h1>Find the Words!</h1>
+            <div id="word-grid"></div>
+            <p style="text-align: center; margin-top: 10px; color: #666; font-size: 0.9em;">Click the first and last letter.</p>
+        </div>
+        
+        <div class="sidebar">
+            <button id="hint-btn">Hint 💡</button>
+            <div id="word-list" class="hidden-list"></div>
+        </div>
+    </div>
+
+    <div id="victory-modal" class="modal-overlay">
+        <div class="modal-content">
+            <h2>You Found Them All! 🦊</h2>
+            <p>Amazing, Little Prince!</p>
+            <button class="btn-finish" onclick="window.location.href='game-prince.html'">Back to Map</button>
+        </div>
+    </div>
+
+    <script>
+        // --- CONFIGURAÇÃO DAS PALAVRAS DO PRÍNCIPE ---
+        const wordsToFind = ['ROSE', 'FOX', 'PLANET', 'PILOT', 'SNAKE', 'STARS'];
+        const gridSize = 10; 
+        let grid = [];
+        let foundWordsCount = 0;
+
+        const gridEl = document.getElementById('word-grid');
+        const listEl = document.getElementById('word-list');
+        const hintBtn = document.getElementById('hint-btn');
+
+        // --- LÓGICA DO BOTÃO DICA ---
+        hintBtn.addEventListener('click', () => {
+            listEl.classList.remove('hidden-list');
+            hintBtn.style.display = 'none';
+        });
+
+        // --- INICIALIZAÇÃO ---
+        function initGame() {
+            // 1. Criar Grade Vazia
+            for (let i = 0; i < gridSize; i++) {
+                grid[i] = new Array(gridSize).fill('');
+            }
+
+            // 2. Colocar Palavras
+            wordsToFind.forEach(placeWord);
+
+            // 3. Preencher espaços vazios
+            fillEmptySpaces();
+
+            // 4. Renderizar HTML
+            renderGrid();
+            renderList();
+        }
+
+        function placeWord(word) {
+            let placed = false;
+            let attempts = 0;
+            while (!placed && attempts < 100) {
+                const direction = Math.random() > 0.5 ? 'H' : 'V';
+                const row = Math.floor(Math.random() * gridSize);
+                const col = Math.floor(Math.random() * gridSize);
+
+                if (canPlace(word, row, col, direction)) {
+                    for (let i = 0; i < word.length; i++) {
+                        if (direction === 'H') grid[row][col + i] = word[i];
+                        else grid[row + i][col] = word[i];
+                    }
+                    placed = true;
+                }
+                attempts++;
+            }
+        }
+
+        function canPlace(word, row, col, direction) {
+            if (direction === 'H') {
+                if (col + word.length > gridSize) return false;
+                for (let i = 0; i < word.length; i++) {
+                    if (grid[row][col + i] !== '' && grid[row][col + i] !== word[i]) return false;
+                }
+            } else {
+                if (row + word.length > gridSize) return false;
+                for (let i = 0; i < word.length; i++) {
+                    if (grid[row + i][col] !== '' && grid[row + i][col] !== word[i]) return false;
+                }
+            }
+            return true;
+        }
+
+        function fillEmptySpaces() {
+            const letters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+            for (let r = 0; r < gridSize; r++) {
+                for (let c = 0; c < gridSize; c++) {
+                    if (grid[r][c] === '') {
+                        grid[r][c] = letters.charAt(Math.floor(Math.random() * letters.length));
+                    }
+                }
+            }
+        }
+
+        function renderGrid() {
+            gridEl.innerHTML = '';
+            for (let r = 0; r < gridSize; r++) {
+                for (let c = 0; c < gridSize; c++) {
+                    const cell = document.createElement('div');
+                    cell.classList.add('letter');
+                    cell.innerText = grid[r][c];
+                    cell.dataset.row = r;
+                    cell.dataset.col = c;
+                    cell.addEventListener('click', handleCellClick);
+                    gridEl.appendChild(cell);
+                }
+            }
+        }
+
+        function renderList() {
+            listEl.innerHTML = '';
+            wordsToFind.forEach(word => {
+                const item = document.createElement('div');
+                item.classList.add('word-item');
+                item.id = 'word-' + word;
+                item.innerText = word;
+                listEl.appendChild(item);
+            });
+        }
+
+        // --- LÓGICA DE SELEÇÃO (Início e Fim) ---
+        let startCell = null;
+
+        function handleCellClick(e) {
+            const cell = e.target;
+            const r = parseInt(cell.dataset.row);
+            const c = parseInt(cell.dataset.col);
+
+            if (cell.classList.contains('found')) return;
+
+            if (!startCell) {
+                startCell = { r, c, el: cell };
+                cell.classList.add('selected');
+            } else {
+                checkWord(startCell, { r, c, el: cell });
+                document.querySelectorAll('.selected').forEach(el => el.classList.remove('selected'));
+                startCell = null;
+            }
+        }
+
+        function checkWord(start, end) {
+            let letters = "";
+            let path = []; 
+            
+            // Horizontal
+            if (start.r === end.r) {
+                const minC = Math.min(start.c, end.c);
+                const maxC = Math.max(start.c, end.c);
+                for (let i = minC; i <= maxC; i++) {
+                    letters += grid[start.r][i];
+                    path.push(document.querySelector(`.letter[data-row="${start.r}"][data-col="${i}"]`));
+                }
+            }
+            // Vertical
+            else if (start.c === end.c) {
+                const minR = Math.min(start.r, end.r);
+                const maxR = Math.max(start.r, end.r);
+                for (let i = minR; i <= maxR; i++) {
+                    letters += grid[i][start.c];
+                    path.push(document.querySelector(`.letter[data-row="${i}"][data-col="${start.c}"]`));
+                }
+            }
+
+            const reversed = letters.split('').reverse().join('');
+            if (wordsToFind.includes(letters) || wordsToFind.includes(reversed)) {
+                const foundWord = wordsToFind.includes(letters) ? letters : reversed;
+                markFound(foundWord, path);
+            }
+        }
+
+        function markFound(word, pathElements) {
+            const wordItem = document.getElementById('word-' + word);
+            if (wordItem.classList.contains('done')) return;
+
+            pathElements.forEach(el => el.classList.add('found'));
+            wordItem.classList.add('done');
+            
+            foundWordsCount++;
+            if (foundWordsCount === wordsToFind.length) {
+                document.getElementById('victory-modal').style.display = 'flex';
+            }
+        }
+
+        initGame();
+    </script>
+</body>
+</html>

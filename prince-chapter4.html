@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chapter 4 - The Goodbye</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+    <link rel="stylesheet" href="prince-chapter-style.css"> 
+</head>
+<body>
+    <a href="game-prince.html" class="back-to-map-btn" title="Voltar ao Mapa"><i class="fas fa-arrow-left"></i></a>
+    <div class="scene-container">
+        <div class="tv-screen">
+            <p class="story-text"></p>
+        </div>
+        <div class="navigation-buttons">
+            <button id="prev-btn" class="nav-arrow" title="Anterior"><i class="fas fa-chevron-left"></i></button>
+            <button id="translate-btn" class="translate-button">Translate</button>
+            <button id="next-btn" class="nav-arrow" title="Próximo"><i class="fas fa-chevron-right"></i></button>
+        </div>
+        <button id="complete-btn" class="complete-button hidden">Complete</button>
+    </div>
+    <div id="completion-modal" class="modal-overlay hidden">
+        <div class="modal-content">
+            <h2>Chapter 4 Complete!</h2>
+            <p>Congratulations!</p>
+            <button id="modal-ok-btn">OK</button>
+        </div>
+    </div>
+    <script src="prince-chapter4-script.js"></script>
+</body>
+</html>
