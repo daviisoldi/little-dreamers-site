@@ -75,7 +75,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 lockedChapterModal.classList.remove('hidden');
             } else if (node.classList.contains('active')) {
                 // Se estiver ativo, entra no capítulo
-                window.location.href = `chapter${chapterNumber}.html`;
+                window.location.href = `pages/chapter${chapterNumber}.html`;
             }
         });
     });
