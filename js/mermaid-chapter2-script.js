@@ -72,7 +72,7 @@ document.addEventListener('DOMContentLoaded', () => {
     });
     
     modalOkBtn.addEventListener('click', () => {
-        window.location.href = 'game-mermaid.html';
+        window.location.href = '../pages/game-mermaid.html';
     });
     
     // 3. Renderiza a página com o idioma correto

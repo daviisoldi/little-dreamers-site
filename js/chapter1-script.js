@@ -65,7 +65,7 @@ document.addEventListener('DOMContentLoaded', () => {
         completionModal.classList.remove('hidden');
     });
     modalOkBtn.addEventListener('click', () => {
-        window.location.href = 'game.html';
+        window.location.href = '../game.html';
     });
     renderPage();
 });

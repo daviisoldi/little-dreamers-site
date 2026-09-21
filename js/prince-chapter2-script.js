@@ -68,7 +68,7 @@ document.addEventListener('DOMContentLoaded', () => {
     });
     
     modalOkBtn.addEventListener('click', () => {
-        window.location.href = 'game-prince.html';
+        window.location.href = '../pages/game-prince.html';
     });
     
     renderPage();

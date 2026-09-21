@@ -66,7 +66,7 @@ document.addEventListener('DOMContentLoaded', () => {
     });
     
     modalOkBtn.addEventListener('click', () => {
-        window.location.href = 'game-prince.html'; // Volta para o mapa do Príncipe
+        window.location.href = '../pages/game-prince.html'; // Volta para o mapa do Príncipe
     });
     
     renderPage();
